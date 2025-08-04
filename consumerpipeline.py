@@ -3,6 +3,7 @@ from confluent_kafka import Consumer, KafkaException
 import pandas as pd
 from pipeline import logger
 from sqlalchemy import create_engine
+from time import sleep
 
 def create_kafka_consumer(topic):
     config = {
@@ -31,11 +32,13 @@ def msg_to_df(cons, dataframe):
             #print(f"mila: {consumed_data}")
             new_data_df = pd.DataFrame([consumed_data])
             dataframe = pd.concat([dataframe, new_data_df], ignore_index=True)
-            print(dataframe) 
+            #print(dataframe) 
+            store_in_postgres(new_data_df)
+            sleep(3)
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
+            sleep(2)
             continue
-        return dataframe
     
 def store_in_postgres(df):
     if df.empty:
