@@ -80,7 +80,7 @@ def get_data(last_endtime, is_initial_fetch=True):
                 'endtime': end_time.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
                 'minmagnitude': 2,'maxmagnitude': 10,
                 'limit': limit,'offset': offset,'orderby': 'time-asc'
-            }, timeout=30)
+            }, timeout=3)
 
             response.raise_for_status()
             data = response.json()
@@ -167,11 +167,12 @@ def main():
             store_in_postgres(df)
             produce_to_kafka(df, producer) # producer is the conf
         last_endtime = current_endtime
-        if is_initial_fetch:
-            sleep(2)  # Short break
-        else:
-            logger.info(f"Waiting 30 seconds for next poll at {datetime.utcnow()}")
-            sleep(3)  # Poll every 1/2 minutes for real-time data
+        #if is_initial_fetch:
+            #sleep(2)  # Short break
+
+        #else:
+            #logger.info(f"Waiting 30 seconds for next poll at {datetime.utcnow()}")
+            #sleep(3)  # Poll every 1/2 minutes for real-time data
 
 if __name__ == '__main__':
     main()
